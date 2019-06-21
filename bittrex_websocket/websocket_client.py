@@ -8,6 +8,7 @@ from ._signalr import Connection
 import logging
 from ._logger import add_stream_logger, remove_stream_logger
 from threading import Thread
+import threading
 from ._queue_events import *
 from .constants import EventTypes, BittrexParameters, BittrexMethods, ErrorMessages, InfoMessages, OtherConstants
 from ._auxiliary import process_message, create_signature, clear_queue, identify_payload, BittrexConnection
@@ -67,6 +68,7 @@ class BittrexSocket(WebSocket):
         self.control_queue.put(ConnectEvent())
         thread = Thread(target=self.control_queue_handler, name='ControlQueueThread')
         thread.daemon = True
+        self.lock = threading.Lock()
         self.threads.append(thread)
         thread.start()
 
